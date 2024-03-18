@@ -1,4 +1,5 @@
-name: Temp
+name: Temp Workflow
+on:
   push:
     branches: []
     tags:
