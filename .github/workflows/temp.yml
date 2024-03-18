@@ -7,7 +7,6 @@ on:
   workflow_dispatch: 
 jobs:
   CI:
-    if: inputs.referenceType == 'tag'
     runs-on: ubuntu-latest
     steps:
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
