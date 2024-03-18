@@ -1,5 +1,4 @@
-name: DataMiner CI Automation
-on:
+name: Temp
   push:
     branches: []
     tags:
