@@ -29,21 +29,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Check Changelog
-        id: changelog_check
-        run: |
-          FILE=./Documentation/CHANGELOG_${{ secrets.REF_NAME }}.md
-          echo "$FILE"
-          if [ -f "$FILE" ]
-          then
-            echo "changelog_exists=true" >> $GITHUB_OUTPUT
-            echo "changelog_file=$FILE" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "There is no changelog found for tag $FILE. Please add a CHANGELOG_$FILE.md file with the changes for this version in the Documentation folder."
-            exit 1
-          fi
-
       - name: Check Release
         id: release_check
         run: |
@@ -62,6 +47,22 @@ jobs:
             exit 0
           else
             echo "Tag is in the incorrect format. Should be 0.0.0.0 for a release or 0.0.0.0-someprereleasetag for a pre-release."
+            exit 1
+          fi
+
+      - name: Check Changelog
+        id: changelog_check
+        if: steps.release_check.outputs.prerelease == 'false'
+        run: |
+          FILE=./Documentation/CHANGELOG_${{ secrets.REF_NAME }}.md
+          echo "$FILE"
+          if [ -f "$FILE" ]
+          then
+            echo "changelog_exists=true" >> $GITHUB_OUTPUT
+            echo "changelog_file=$FILE" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "There is no changelog found for tag $FILE. Please add a CHANGELOG_$FILE.md file with the changes for this version in the Documentation folder."
             exit 1
           fi
 
