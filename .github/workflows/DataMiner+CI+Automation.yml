@@ -88,6 +88,7 @@ jobs:
             mv $path $newpath
             echo "dmappPackageName=$newpath" >> $GITHUB_OUTPUT
           else
+            exit 1
             echo "dmappPackageName=""" >> $GITHUB_OUTPUT
           fi
 
@@ -100,8 +101,6 @@ jobs:
 
       - name: Create Release
         uses: ncipollo/release-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
         with:
           name: ${{ github.ref_name }}
           bodyFile: ${{ steps.changelog_check.outputs.changelog_file }}
