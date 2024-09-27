@@ -81,11 +81,15 @@ jobs:
           path=$(find _DataMinerInstallationPackage -type f -name '*.dmapp')
           echo $path
 
-          newpath="${path%.*}_${{ github.ref_name }}.dmapp"
-          echo $newpath
-
-          mv $path $newpath
-          echo "dmappPackageName=$newpath" >> $GITHUB_OUTPUT
+          if [ ! -z "$path"]
+          then
+            newpath="${path%.*}_${{ github.ref_name }}.dmapp"
+            echo $newpath
+            mv $path $newpath
+            echo "dmappPackageName=$newpath" >> $GITHUB_OUTPUT
+          else
+            echo "dmappPackageName=""" >> $GITHUB_OUTPUT
+          fi
 
       - name: Logging
         run: |
