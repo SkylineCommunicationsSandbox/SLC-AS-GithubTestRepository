@@ -81,7 +81,7 @@ jobs:
           path=$(find _DataMinerInstallationPackage -type f -name '*.dmapp')
           echo $path
 
-          if [ ! -z "$path"]
+          if [ ! -z "$path" ]
           then
             newpath="${path%.*}_${{ github.ref_name }}.dmapp"
             echo $newpath
