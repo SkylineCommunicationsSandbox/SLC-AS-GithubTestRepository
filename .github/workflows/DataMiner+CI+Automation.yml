@@ -78,7 +78,14 @@ jobs:
       - name: Find Installation Package
         id: findInstallationPackage
         run: |
-          echo dmappPackageName=$(find _DataMinerInstallationPackage -type f -name '*.dmapp') >> $GITHUB_OUTPUT
+          path=$(find _DataMinerInstallationPackage -type f -name '*.dmapp')
+          echo $path
+
+          newpath="${path%.*}_${{ github.ref_name }}.dmapp"
+          echo $newpath
+
+          mv $path $newpath
+          echo "dmappPackageName=$newpath" >> $GITHUB_OUTPUT
 
       - name: Logging
         run: |
