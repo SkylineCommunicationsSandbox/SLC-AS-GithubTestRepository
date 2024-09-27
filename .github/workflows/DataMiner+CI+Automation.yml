@@ -7,19 +7,19 @@ on:
     - '[0-9]+.[0-9]+.[0-9]+.[0-9]+-[0-9a-zA-Z]+'
   workflow_dispatch: 
 jobs:
-  CI:
-    name: CI
-    uses: SkylineCommunications/_ReusableWorkflows/.github/workflows/Automation Master Workflow.yml@main
-    with:
-      referenceName: ${{ github.ref_name }}
-      runNumber: ${{ github.run_number }}
-      referenceType: ${{ github.ref_type }}
-      repository: ${{ github.repository }}
-      owner: ${{ github.repository_owner }}
-      sonarCloudProjectName: qsdqsd
-    secrets:
-      api-key: ${{ secrets.DATAMINER_DEPLOY_KEY }}
-      sonarCloudToken: ${{ secrets.SONAR_TOKEN }}
+  # CI:
+  #   name: CI
+  #   uses: SkylineCommunications/_ReusableWorkflows/.github/workflows/Automation Master Workflow.yml@main
+  #   with:
+  #     referenceName: ${{ github.ref_name }}
+  #     runNumber: ${{ github.run_number }}
+  #     referenceType: ${{ github.ref_type }}
+  #     repository: ${{ github.repository }}
+  #     owner: ${{ github.repository_owner }}
+  #     sonarCloudProjectName: qsdqsd
+  #   secrets:
+  #     api-key: ${{ secrets.DATAMINER_DEPLOY_KEY }}
+  #     sonarCloudToken: ${{ secrets.SONAR_TOKEN }}
 
   Release:
     # if: github.ref_type == 'tag'
@@ -44,18 +44,37 @@ jobs:
             exit 1
           fi
 
+      - name: Check Release
+        id: release_check
+        run: |
+          REF_NAME="${{ secrets.REF_NAME }}""
+          RELEASE_REGEX="^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$"
+          PRE_RELEASE_REGEX="^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+-[0-9a-zA-Z]+$"
+          if [[ $REF_NAME =~ $RELEASE_REGEX ]]
+          then
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+            exit 0
+          elif [[ $REF_NAME =~ $PRE_RELEASE_REGEX ]]
+          then
+            echo "prerelease=true" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            exit 1
+          fi
+
       - name: Logging
         run: |
           echo ${{ steps.changelog_check.outputs.changelog_exists }}
           echo ${{ steps.changelog_check.outputs.changelog_file }}
+          echo ${{ steps.release_check.outputs.prerelease }}
 
-      # - name: Create Release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: ${{ github.ref }}
-      #     body_path: ${{ steps.changelog_check.outputs.changelog_file }}
-      #     draft: false
-      #     prerelease: false
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body_path: ${{ steps.changelog_check.outputs.changelog_file }}
+          draft: false
+          prerelease: ${{ steps.release_check.outputs.prerelease == 'true' }}
