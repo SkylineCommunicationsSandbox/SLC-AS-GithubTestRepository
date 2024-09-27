@@ -34,7 +34,7 @@ jobs:
       - name: Check Release
         id: release_check
         run: |
-          REF_NAME="${{ github.ref_type }}"
+          REF_NAME="${{ github.ref_name }}"
           RELEASE_REGEX="^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$"
           PRE_RELEASE_REGEX="^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+-[0-9a-zA-Z]+$"
           if [[ $REF_NAME =~ $RELEASE_REGEX ]]
@@ -56,7 +56,7 @@ jobs:
         id: changelog_check
         if: steps.release_check.outputs.prerelease == 'false'
         run: |
-          FILE=./Documentation/CHANGELOG_${{ github.ref_type }}.md
+          FILE=./Documentation/CHANGELOG_${{ github.ref_name }}.md
           echo "$FILE"
           if [ -f "$FILE" ]
           then
@@ -92,7 +92,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
         with:
-          name: ${{ github.ref_type }}
+          name: ${{ github.ref_name }}
           bodyFile: ${{ steps.changelog_check.outputs.changelog_file }}
           draft: false
           prerelease: ${{ steps.release_check.outputs.prerelease == 'true' }}
