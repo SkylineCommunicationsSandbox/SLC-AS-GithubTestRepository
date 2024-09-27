@@ -40,7 +40,7 @@ jobs:
             echo "changelog_file=$FILE" >> $GITHUB_OUTPUT
             exit 0
           else
-            echo "changelog_exists=false" >> $GITHUB_OUTPUT
+            echo "There is no changelog found for tag $FILE. Please add a CHANGELOG_$FILE.md file with the changes for this version in the Documentation folder."
             exit 1
           fi
 
@@ -53,12 +53,15 @@ jobs:
           if [[ $REF_NAME =~ $RELEASE_REGEX ]]
           then
             echo "prerelease=false" >> $GITHUB_OUTPUT
+            echo "Release"
             exit 0
           elif [[ $REF_NAME =~ $PRE_RELEASE_REGEX ]]
           then
             echo "prerelease=true" >> $GITHUB_OUTPUT
+            echo "Pre-Release"
             exit 0
           else
+            echo "Tag is in the incorrect format. Should be 0.0.0.0 for a release or 0.0.0.0-someprereleasetag for a pre-release."
             exit 1
           fi
 
