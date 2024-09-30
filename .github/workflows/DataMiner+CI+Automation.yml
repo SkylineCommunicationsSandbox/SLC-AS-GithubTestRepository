@@ -8,7 +8,6 @@ on:
   workflow_dispatch: 
 jobs:
   CI:
-    name: CI
     uses: ./.github/workflows/Automation Master SDK Workflow.yml
     with:
       referenceName: ${{ github.ref_name }}
@@ -22,9 +21,9 @@ jobs:
       sonarCloudToken: ${{ secrets.SONAR_TOKEN }}
 
   CD:
-    name: CD
     uses: ArneMaes0/ReusableWorkflows/.github/workflows/Release With DMAPP Artifact.yml@main
     if: github.ref_type == 'tag'
+    needs: CI
     permissions: 
       contents: write
     with:
