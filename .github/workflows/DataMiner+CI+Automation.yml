@@ -24,6 +24,7 @@ jobs:
   CD:
     name: CD
     uses: ArneMaes0/ReusableWorkflows/.github/workflows/Release With DMAPP Artifact.yml@main
+    if: github.ref_type == 'tag'
     with:
       referenceName: ${{ github.ref_name }}
       referenceType: ${{ github.ref_type }}
