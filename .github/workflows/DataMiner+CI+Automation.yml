@@ -23,7 +23,7 @@ jobs:
 
   CD:
     name: CD
-    uses: ArneMaes0/ReusableWorkflows/Release/Release With DMAPP Artifact.yml@main
+    uses: ArneMaes0/ReusableWorkflows/.github/workflows/Release With DMAPP Artifact.yml@main
     with:
       referenceName: ${{ github.ref_name }}
       referenceType: ${{ github.ref_type }}
